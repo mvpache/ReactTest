@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
+import FiltersContainer from './FiltersContainer';
+
 class App extends Component {
   constructor() {
     super();
@@ -10,12 +12,7 @@ class App extends Component {
         gender: [],
         ethnicity: []
       },
-      activefilters: {
-        year: '',
-        gender: '',
-        ethnicity: '',
-      },
-      data: null
+      data: false
     };
   }
 
@@ -46,11 +43,6 @@ class App extends Component {
         const possible = this.getPossibleFilters(names.data.data)
         this.setState({
           possibleFilters: possible, 
-          activefilters: {
-            year: '',
-            gender: '',
-            ethnicity: '',
-          },
           data: names.data.data })
       })
       .catch();
@@ -63,7 +55,8 @@ class App extends Component {
   render() {
     return (
       <div>
-        To get started, edit <code>src/App.js</code> and save to reload.
+        <FiltersContainer filters=
+        {this.state.possibleFilters}/>
       </div>
     );
   }
