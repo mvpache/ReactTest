@@ -9,7 +9,11 @@ class Filter extends Component {
   }
 
   handleSelection = (event) => {
+    this.props.apply(
+      {[this.props.filterType]: event.target.value}
+      )
     this.setState({ selectedOption: event.target.value });
+    //add a call back function here that applies a filter to the filter container
   };
 
   render() {
@@ -24,7 +28,7 @@ class Filter extends Component {
       </div>
       {this.props.options.map(option => <div>
         <label>
-          <input type="radio" value={option}
+          <input type="radio" value={option} key={option.index}
             checked={this.state.selectedOption === `${option}`}
             onChange={this.handleSelection} />
           {option}
