@@ -1,9 +1,20 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { Bar as BarChart } from 'react-chartjs';
+import styled from 'styled-components';
 
 import Filter from './Filter';
 import AppliedFilters from './AppliedFilters';
+
+const FiltersContainer = styled.div`
+  display: flex;
+`;
+
+const FilterOptions = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin: 0% 5% 0% 5%;
+`;
 
 class App extends Component {
   constructor() {
@@ -69,6 +80,7 @@ class App extends Component {
         }
       }
     })
+    console.log(topTen)
     const dataGraph = {
       labels: [topTen[9][11], topTen[8][11], topTen[7][11], topTen[6][11], topTen[5][11], topTen[4][11], topTen[3][11], topTen[2][11], topTen[1][11], topTen[0][11]],
       datasets: [
@@ -110,7 +122,7 @@ class App extends Component {
       .get(`https://data.cityofnewyork.us/api/views/25th-nujf/rows.json`)
       .then(names => {
         if (activeFilters.year === 'all' && activeFilters.gender === 'all' && activeFilters.ethnicity === 'all') {
-          newData.concat(names.data.data);
+          return newData.concat(names.data.data);
         } else {
           names.data.data.forEach(child => {
             if (activeFilters.gender === 'all' || activeFilters.gender === child[9]) {
@@ -126,7 +138,6 @@ class App extends Component {
       })
       .then(newData => {
         const newFilteredData = this.getTopTen(newData);
-        console.log(newFilteredData)
         return newFilteredData;
       }).then(filteredData => {
       this.setState({ ...this.state, activeFilters: activeFilters, data: filteredData })
@@ -162,13 +173,29 @@ class App extends Component {
 
   render() {
     return <div>
-        <Filter filterType={'ethnicity'} options={this.state.possibleFilters.ethnicity} apply={info => this.applyFilter(info)} />
-        <Filter filterType={'gender'} options={this.state.possibleFilters.gender} apply={info => this.applyFilter(info)} />
-        <Filter filterType={'year'} options={this.state.possibleFilters.year} apply={info => this.applyFilter(info)} />
-        {this.state.data && <BarChart 
-        data={this.state.data} 
-        width="900" height="375" />}
-        <AppliedFilters filters={this.state.activeFilters}/>
+      <h1>Top Ten New York Baby Names</h1>
+      <div>
+        {this.state.data && <BarChart
+          data={this.state.data}
+          width="900" height="375" />}
+      </div>
+      <FiltersContainer>
+        <FilterOptions>
+        <Filter filterType={'ethnicity'} 
+        options={this.state.possibleFilters.ethnicity} 
+        apply={info => this.applyFilter(info)} 
+        />
+        <Filter filterType={'gender'} 
+        options={this.state.possibleFilters.gender} 
+        apply={info => this.applyFilter(info)}
+         />
+        <Filter filterType={'year'} 
+        options={this.state.possibleFilters.year} 
+        apply={info => this.applyFilter(info)}
+         />
+        </FilterOptions>
+        <AppliedFilters filters={this.state.activeFilters} />
+      </FiltersContainer>
       </div>;
   }
 }
