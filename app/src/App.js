@@ -67,11 +67,8 @@ class App extends Component {
         }
       }
     })
-    console.log(topTen);
     return topTen;
   }
-
-
 
   getPossibleFilters(data) {
     //iterate through each item in data
@@ -94,7 +91,6 @@ class App extends Component {
   }
 
   filterData(activeFilters) {
-    console.log('activeFilter');
     const newData = [];
     axios
       .get(`https://data.cityofnewyork.us/api/views/25th-nujf/rows.json`)
@@ -112,18 +108,23 @@ class App extends Component {
             }
           });
         }
+        return newData;
       })
-      .catch('ERROR WITH REQUEST');
-    return newData;
+      .then(newData => {
+        const newFilteredData = this.getTopTen(newData);
+        console.log(newFilteredData)
+        return newFilteredData;
+      }).then(filteredData => {
+      this.setState({ ...this.state, activeFilters: activeFilters, data: filteredData })
+      }).catch('ERROR WITH REQUEST')
   }
 
   applyFilter(newFilter) {
     const filterCopy = { ...this.state.activeFilters, ...newFilter }
-    const filteredData = this.filterData(filterCopy);
-    //use filter data with activeFilters(the copy)1
+    return this.filterData(filterCopy);
+    //use filter data with activeFilters(the copy)
     //set state for new activefilters and data
-    this.setState({ ...this.state, activeFilters: filterCopy, data: filteredData })
-  }
+    }
 
   componentDidMount() {
     axios
