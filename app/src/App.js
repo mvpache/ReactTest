@@ -21,6 +21,58 @@ class App extends Component {
     };
   }
 
+  getTopTen(data) {
+    const topTen = [];
+    data.forEach(child => {
+      //iterate through data set
+      //if topTen is empty, add the first piece of data
+      if (topTen.length === 0) {
+        topTen.push(child);
+        //if topTen is less than 10
+        //iterate through topTen
+      } else if (topTen.length < 10) {
+        for (let i = 0; i < topTen.length; i++) {
+          //is Child greater than or equal to TopChild?
+          if (child[12]/1 >= topTen[i][12]/1) {
+            if (i === topTen.length - 1) {
+              //is this the last index?
+              //push the child onto TopTen
+              topTen.push(child);
+              return;
+              //is less or equal to the next one?
+              //splice it here and return
+            } else if (child[12]/1 <= topTen[i + 1][12]/1) {
+  
+              topTen.splice(i+1, 0, child);
+              return;
+            }
+          } else {
+            topTen.unshift(child);
+            return;
+          }
+        }
+      } else if (topTen.length === 10) {
+        for (let i = 0; i < topTen.length; i++) {
+          if (child[12]/1 >= topTen[i][12]/1) {
+            if (i === topTen.length - 1) {
+              topTen.shift();
+              topTen.push(child);
+              return;
+            } else if (child[12]/1 <= topTen[i + 1][12]/1) {
+              topTen.splice(i+1, 0, child);
+              topTen.shift();
+              return;
+            }
+          }
+        }
+      }
+    })
+    console.log(topTen);
+    return topTen;
+  }
+
+
+
   getPossibleFilters(data) {
     //iterate through each item in data
     //if item at 8, 9, 10 not in possible filters, add
@@ -77,10 +129,14 @@ class App extends Component {
     axios
       .get(`https://data.cityofnewyork.us/api/views/25th-nujf/rows.json`)
       .then(names => {
-        const possible = this.getPossibleFilters(names.data.data)
-        this.setState({ ...this.state,
-          possibleFilters: possible, 
-          data: names.data.data })
+        const possible = 
+        this.getPossibleFilters(names.data.data)
+        const topTen = this.getTopTen(names.data.data);
+        this.setState({
+          ...this.state,
+          possibleFilters: possible,
+          data: topTen,
+        });
       })
       .catch(console.log('ERROR WITH REQUEST'));
   }
