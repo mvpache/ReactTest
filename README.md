@@ -1,3 +1,8 @@
+To run:  
+You'll need npm which you can get with Node  
+Inside of reacttest\app run "npm i"  
+The run npm start  
+
 Requirements  
  Write the application in React  
  Pull the data from:  
