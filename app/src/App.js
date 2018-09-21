@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import { Bar as BarChart } from 'react-chartjs';
 
 import Filter from './Filter';
+import AppliedFilters from './AppliedFilters';
 
 class App extends Component {
   constructor() {
@@ -67,7 +69,19 @@ class App extends Component {
         }
       }
     })
-    return topTen;
+    const dataGraph = {
+      labels: [topTen[9][11], topTen[8][11], topTen[7][11], topTen[6][11], topTen[5][11], topTen[4][11], topTen[3][11], topTen[2][11], topTen[1][11], topTen[0][11]],
+      datasets: [
+        {
+          label: "Top 10 Names",
+          fillColor: "rgba(20,20,222,0.5)",
+          strokeColor: "rgba(220,220,220,0.8)",
+          highlightFill: "rgba(220,220,220,0.75)",
+          highlightStroke: "rgba(220,220,220,1)",
+          data: [topTen[9][12], topTen[8][12], topTen[7][12], topTen[6][12], topTen[5][12], topTen[4][12], topTen[3][12], topTen[2][12], topTen[1][12], topTen[0][12]]
+        }]
+      }
+    return dataGraph;
   }
 
   getPossibleFilters(data) {
@@ -148,9 +162,13 @@ class App extends Component {
 
   render() {
     return <div>
-      <Filter filterType={'ethnicity'} options={this.state.possibleFilters.ethnicity} apply={(info) => this.applyFilter(info)} />
-        <Filter filterType={'gender'} options={this.state.possibleFilters.gender} apply={(info) => this.applyFilter(info)} />
-      <Filter filterType={'year'} options={this.state.possibleFilters.year} apply={(info) => this.applyFilter(info)} />
+        <Filter filterType={'ethnicity'} options={this.state.possibleFilters.ethnicity} apply={info => this.applyFilter(info)} />
+        <Filter filterType={'gender'} options={this.state.possibleFilters.gender} apply={info => this.applyFilter(info)} />
+        <Filter filterType={'year'} options={this.state.possibleFilters.year} apply={info => this.applyFilter(info)} />
+        {this.state.data && <BarChart 
+        data={this.state.data} 
+        width="900" height="375" />}
+        <AppliedFilters filters={this.state.activeFilters}/>
       </div>;
   }
 }
